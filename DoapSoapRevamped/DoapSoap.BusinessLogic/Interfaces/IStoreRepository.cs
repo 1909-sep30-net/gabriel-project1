@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DoapSoap.BusinessLogic.Interfaces
 {
-    interface IStoreRepository : IDisposable
+    public interface IStoreRepository : IDisposable
     {
         void Add(Customer customer);
         void Add(Order order);
