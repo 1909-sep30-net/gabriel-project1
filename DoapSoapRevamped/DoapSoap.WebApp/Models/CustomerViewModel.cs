@@ -9,6 +9,8 @@ namespace DoapSoap.WebApp.Models
 {
     public class CustomerViewModel
     {
+        private string _phone;
+
         [DisplayName("ID")]
         public int Id { get; set; }
 
@@ -22,6 +24,16 @@ namespace DoapSoap.WebApp.Models
 
         [DisplayName("Phone Number")]
         [Required]
-        public string Phone { get; set; }
+        public string Phone 
+        {
+            get
+            {
+                return String.Format("({0}) {1}-{2}", _phone.Substring(0, 3), _phone.Substring(3, 3), _phone.Substring(6, 4));
+            }
+            set
+            {
+                _phone = value;
+            }
+        }
     }
 }

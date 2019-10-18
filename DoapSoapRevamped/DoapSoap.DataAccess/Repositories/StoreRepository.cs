@@ -24,7 +24,10 @@ namespace DoapSoap.DataAccess.Repositories
 
         public void Add(Customer customer)
         {
-            throw new NotImplementedException();
+            var newEntity = Mapper.MapCustomer(customer);
+            newEntity.CustomerId = 0;
+            _context.Add(newEntity);
+            _context.SaveChanges();
         }
 
         public void Add(Order order)
@@ -58,6 +61,9 @@ namespace DoapSoap.DataAccess.Repositories
             return _context.Orders
                 .Include(o => o.Customer)
                 .Include(o => o.Location)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                        .ThenInclude(p => p.Spice)
                 .Where(o => o.CustomerId == id)
                 .Select(Mapper.MapOrder).ToList();
         }

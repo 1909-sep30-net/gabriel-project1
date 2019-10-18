@@ -24,6 +24,8 @@ namespace DoapSoap.WebApp.Models
         [Required]
         public DateTime Time { get; set; }
 
-        public BusinessLogic.Models.Customer Customer { get; set; }
+        // Add product list details
+        [DisplayName("Product List")]
+        public IEnumerable<OrderDetailsViewModel> ProductList { get; set; }
     }
 }

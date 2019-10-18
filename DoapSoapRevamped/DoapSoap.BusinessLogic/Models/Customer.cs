@@ -22,7 +22,7 @@ namespace DoapSoap.BusinessLogic.Models
         {
             get
             {
-                return String.Format("({0}) {1}-{2}", _phone.Substring(0,3), _phone.Substring(3, 3), _phone.Substring(6, 4));
+                return _phone;
             }
             set
             {
@@ -32,6 +32,14 @@ namespace DoapSoap.BusinessLogic.Models
                 }
 
                 _phone = value;
+            }
+        }
+
+        public string DisplayPhone
+        {
+            get
+            {
+                return String.Format("({0}) {1}-{2}", _phone.Substring(0, 3), _phone.Substring(3, 3), _phone.Substring(6, 4));
             }
         }
 

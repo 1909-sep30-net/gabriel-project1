@@ -22,7 +22,7 @@ namespace DoapSoap.WebApp.Controllers
             _repo = repo;
         }
 
-        // GET: Customer
+        // Display list of customers
         public ActionResult Index()
         {
             IEnumerable<BusinessLogic.Models.Customer> customers = _repo.GetAllCustomers(null);
@@ -40,40 +40,37 @@ namespace DoapSoap.WebApp.Controllers
             return View(viewmodels);
         }
 
-        // Get Customer Order History
+        // Display specific customer's Order History and details of order
         public ActionResult Details(int id)
         {
             IEnumerable<BusinessLogic.Models.Order> orders = _repo.GetOrdersByCustomerID(id);
-            List<OrderHistoryViewModel> viewmodels = new List<OrderHistoryViewModel>();
-            var customer = _repo.GetCustomer(id);
-            if (orders.Count() > 0)
-            {
-                viewmodels = orders.Select(c => new OrderHistoryViewModel
-                {
-                    Id = c.ID,
-                    LocationName = c.Location.Name,
-                    Time = c.TimePlaced,
-                    CustomerName = c.Customer.Name,
-                    Customer = c.Customer
-                }).ToList();
-            } 
-            else
-            {
-                viewmodels.Add(new OrderHistoryViewModel
-                {
-                    Id = 0,
-                    LocationName = "",
-                    Time = DateTime.Now,
-                    CustomerName = customer.Name,
-                    Customer = customer
-                });
-            }
 
+            string customerName = _repo.GetCustomer(id).Name;
 
-            logger.Info($"Viewing {_repo.GetCustomer(id).Name} Order History");
+            ViewData["CustomerLogName"] = customerName;
+
+            // Populate each order history view with their own list of product details
+            var viewmodels = orders.Select(c => new OrderHistoryViewModel
+            {
+                Id = c.ID,
+                LocationName = c.Location.Name,
+                Time = c.TimePlaced,
+                CustomerName = c.Customer.Name,
+                ProductList = c.ProductList.Select(i => new OrderDetailsViewModel
+                {
+                    ProductName = i.Key.Name,
+                    Spice = i.Key.Spice.Name,
+                    Quantity = i.Value,
+                    Price = i.Key.Price
+                })
+            });
+
+            logger.Info($"Viewing {customerName}'s Order History");
 
             return View(viewmodels);
         }
+
+
 
         // GET: Customer/Create
         public ActionResult Create()
@@ -81,22 +78,39 @@ namespace DoapSoap.WebApp.Controllers
             return View();
         }
 
-        // POST: Customer/Create
+ 
+        /// <summary>
+        /// Create new customer
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(CustomerViewModel viewModel)
         {
             try
             {
-                // TODO: Add insert logic here
+                // Create new instance of customer from the viewmodel
+                var newCustomer = new BusinessLogic.Models.Customer
+                {
+                    FirstName = viewModel.FirstName,
+                    LastName = viewModel.LastName,
+                    Phone = viewModel.Phone
+                };
+
+                // Add to db via repo
+                _repo.Add(newCustomer);
+                logger.Info("Added new customer");
 
                 return RedirectToAction(nameof(Index));
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                logger.Debug(ex.Message);
+                return View(viewModel);
             }
         }
+
 
         // GET: Customer/Edit/5
         public ActionResult Edit(int id)

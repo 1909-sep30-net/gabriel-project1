@@ -117,7 +117,7 @@ namespace DoapSoap.DataAccess
                 ID = product.ProductId,
                 Name = product.Name,
                 Price = product.Price,
-                Spice = MapColor(product.Spice)
+                Spice = MapSpice(product.Spice)
             };
         }
 
@@ -130,7 +130,7 @@ namespace DoapSoap.DataAccess
             };
         }
 
-        public static BusinessLogic.Models.SpiceLevel MapColor (Entities.SpiceLevels spice)
+        public static BusinessLogic.Models.SpiceLevel MapSpice (Entities.SpiceLevels spice)
         {
             return new BusinessLogic.Models.SpiceLevel
             {

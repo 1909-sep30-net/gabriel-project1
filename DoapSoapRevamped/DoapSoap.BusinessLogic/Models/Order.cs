@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace DoapSoap.BusinessLogic.Models
@@ -30,5 +31,20 @@ namespace DoapSoap.BusinessLogic.Models
         /// Dictionary that maps the quantity to products in this order
         /// </summary>
         public Dictionary<Product, int> ProductList = new Dictionary<Product, int>();
+
+        /// <summary>
+        /// Return total value of the order
+        /// </summary>
+        /// <returns></returns>
+        public decimal GetTotal()
+        {
+            decimal sum = 0;
+            var pl = ProductList.ToList();
+            foreach (KeyValuePair<Product,int> item in pl)
+            {
+                sum += item.Value * item.Key.Price;
+            }
+            return sum;
+        }
     }
 }
