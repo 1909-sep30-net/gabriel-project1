@@ -10,6 +10,6 @@ namespace DoapSoap.BusinessLogic.Models
         public string Name { get; set; }
         public decimal Price { get; set; }
         
-        public Color Color { get; set; }
+        public SpiceLevel Spice { get; set; }
     }
 }

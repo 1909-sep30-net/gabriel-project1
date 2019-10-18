@@ -6,11 +6,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NLog;
 
 namespace DoapSoap.WebApp
 {
     public class Program
     {
+        private static readonly NLog.ILogger s_logger = LogManager.GetCurrentClassLogger();
+
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();

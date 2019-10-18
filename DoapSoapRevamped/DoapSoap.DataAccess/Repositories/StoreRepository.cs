@@ -5,6 +5,7 @@ using System.Text;
 using DoapSoap.BusinessLogic.Interfaces;
 using DoapSoap.BusinessLogic.Models;
 using DoapSoap.DataAccess.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace DoapSoap.DataAccess.Repositories
 {
@@ -43,6 +44,7 @@ namespace DoapSoap.DataAccess.Repositories
 
         public Customer GetCustomer(int id)
         {
+            return Mapper.MapCustomer(_context.Customers.Find(id));
             throw new NotImplementedException();
         }
 
@@ -53,7 +55,11 @@ namespace DoapSoap.DataAccess.Repositories
 
         public IEnumerable<Order> GetOrdersByCustomerID(int id)
         {
-            throw new NotImplementedException();
+            return _context.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.Location)
+                .Where(o => o.CustomerId == id)
+                .Select(Mapper.MapOrder).ToList();
         }
 
         public IEnumerable<Order> GetOrdersByLocationID(int id)

@@ -18,6 +18,15 @@ namespace DoapSoap.DataAccess
                 Inventory = location.InventoryItems.ToDictionary(o=>MapProduct(o.Product),o=>o.Quantity)
             };
         }
+        public static BusinessLogic.Models.Location MapLocationWithoutOI(Entities.Locations location)
+        {
+            return new BusinessLogic.Models.Location
+            {
+                ID = location.LocationId,
+                Name = location.Name,
+            };
+        }
+
         public static Entities.Locations MapLocation(BusinessLogic.Models.Location location)
         {
             return new Entities.Locations
@@ -39,6 +48,17 @@ namespace DoapSoap.DataAccess
             };
         }
 
+        public static BusinessLogic.Models.Customer MapCustomerWithoutOrders(Entities.Customers customer)
+        {
+            return new BusinessLogic.Models.Customer
+            {
+                ID = customer.CustomerId,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+                Phone = customer.Phone,
+            };
+        }
+
         public static Entities.Customers MapCustomer(BusinessLogic.Models.Customer customer)
         {
             return new Entities.Customers
@@ -56,8 +76,9 @@ namespace DoapSoap.DataAccess
             {
                 ID = order.OrderId,
                 TimePlaced = order.TimeConfirmed,
-                ProductList = order.OrderItems.ToDictionary(o => MapProduct(o.Product), o => o.Quantity)
-                
+                ProductList = order.OrderItems.ToDictionary(o => MapProduct(o.Product), o => o.Quantity),
+                Customer = MapCustomerWithoutOrders(order.Customer),
+                Location = MapLocationWithoutOI(order.Location)
             };
         }
         public static Entities.Orders MapOrder(BusinessLogic.Models.Order order)
@@ -96,7 +117,7 @@ namespace DoapSoap.DataAccess
                 ID = product.ProductId,
                 Name = product.Name,
                 Price = product.Price,
-                Color = MapColor(product.Color)
+                Spice = MapColor(product.Spice)
             };
         }
 
@@ -109,12 +130,12 @@ namespace DoapSoap.DataAccess
             };
         }
 
-        public static BusinessLogic.Models.Color MapColor (Entities.Colors color)
+        public static BusinessLogic.Models.SpiceLevel MapColor (Entities.SpiceLevels spice)
         {
-            return new BusinessLogic.Models.Color
+            return new BusinessLogic.Models.SpiceLevel
             {
-                ID = color.ColorId,
-                Name = color.Name
+                ID = spice.SpiceId,
+                Name = spice.Name
             };
         }
     }

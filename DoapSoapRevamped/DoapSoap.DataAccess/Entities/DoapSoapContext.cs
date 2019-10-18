@@ -15,13 +15,13 @@ namespace DoapSoap.DataAccess.Entities
         {
         }
 
-        public virtual DbSet<Colors> Colors { get; set; }
         public virtual DbSet<Customers> Customers { get; set; }
         public virtual DbSet<InventoryItems> InventoryItems { get; set; }
         public virtual DbSet<Locations> Locations { get; set; }
         public virtual DbSet<OrderItems> OrderItems { get; set; }
         public virtual DbSet<Orders> Orders { get; set; }
         public virtual DbSet<Products> Products { get; set; }
+        public virtual DbSet<SpiceLevels> SpiceLevels { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -33,26 +33,10 @@ namespace DoapSoap.DataAccess.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Colors>(entity =>
-            {
-                entity.HasKey(e => e.ColorId)
-                    .HasName("PK__Colors__8DA7676D403CA3F8");
-
-                entity.HasIndex(e => e.Name)
-                    .HasName("UQ__Colors__737584F63CE422E2")
-                    .IsUnique();
-
-                entity.Property(e => e.ColorId).HasColumnName("ColorID");
-
-                entity.Property(e => e.Name)
-                    .IsRequired()
-                    .HasMaxLength(50);
-            });
-
             modelBuilder.Entity<Customers>(entity =>
             {
                 entity.HasKey(e => e.CustomerId)
-                    .HasName("PK__Customer__A4AE64B8AEF7C13A");
+                    .HasName("PK__Customer__A4AE64B8F788462B");
 
                 entity.Property(e => e.CustomerId).HasColumnName("CustomerID");
 
@@ -70,7 +54,7 @@ namespace DoapSoap.DataAccess.Entities
             modelBuilder.Entity<InventoryItems>(entity =>
             {
                 entity.HasKey(e => e.InventoryItemId)
-                    .HasName("PK__Inventor__3BB2ACA0E1D93CFE");
+                    .HasName("PK__Inventor__3BB2ACA0673836F3");
 
                 entity.ToTable("Inventory_Items");
 
@@ -83,18 +67,18 @@ namespace DoapSoap.DataAccess.Entities
                 entity.HasOne(d => d.Location)
                     .WithMany(p => p.InventoryItems)
                     .HasForeignKey(d => d.LocationId)
-                    .HasConstraintName("FK__Inventory__Locat__5E1FF51F");
+                    .HasConstraintName("FK__Inventory__Locat__0CDAE408");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.InventoryItems)
                     .HasForeignKey(d => d.ProductId)
-                    .HasConstraintName("FK__Inventory__Produ__5F141958");
+                    .HasConstraintName("FK__Inventory__Produ__0DCF0841");
             });
 
             modelBuilder.Entity<Locations>(entity =>
             {
                 entity.HasKey(e => e.LocationId)
-                    .HasName("PK__Location__E7FEA47746F54BD8");
+                    .HasName("PK__Location__E7FEA477E1607851");
 
                 entity.Property(e => e.LocationId).HasColumnName("LocationID");
 
@@ -106,7 +90,7 @@ namespace DoapSoap.DataAccess.Entities
             modelBuilder.Entity<OrderItems>(entity =>
             {
                 entity.HasKey(e => e.OrderItemId)
-                    .HasName("PK__Order_It__57ED06A185210CB5");
+                    .HasName("PK__Order_It__57ED06A1E0A3CED7");
 
                 entity.ToTable("Order_Items");
 
@@ -119,18 +103,18 @@ namespace DoapSoap.DataAccess.Entities
                 entity.HasOne(d => d.Order)
                     .WithMany(p => p.OrderItems)
                     .HasForeignKey(d => d.OrderId)
-                    .HasConstraintName("FK__Order_Ite__Order__5A4F643B");
+                    .HasConstraintName("FK__Order_Ite__Order__090A5324");
 
                 entity.HasOne(d => d.Product)
                     .WithMany(p => p.OrderItems)
                     .HasForeignKey(d => d.ProductId)
-                    .HasConstraintName("FK__Order_Ite__Produ__5B438874");
+                    .HasConstraintName("FK__Order_Ite__Produ__09FE775D");
             });
 
             modelBuilder.Entity<Orders>(entity =>
             {
                 entity.HasKey(e => e.OrderId)
-                    .HasName("PK__Orders__C3905BAF141842D4");
+                    .HasName("PK__Orders__C3905BAF4FE4989E");
 
                 entity.Property(e => e.OrderId).HasColumnName("OrderID");
 
@@ -145,22 +129,20 @@ namespace DoapSoap.DataAccess.Entities
                 entity.HasOne(d => d.Customer)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.CustomerId)
-                    .HasConstraintName("FK__Orders__Customer__567ED357");
+                    .HasConstraintName("FK__Orders__Customer__0539C240");
 
                 entity.HasOne(d => d.Location)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.LocationId)
-                    .HasConstraintName("FK__Orders__Location__5772F790");
+                    .HasConstraintName("FK__Orders__Location__062DE679");
             });
 
             modelBuilder.Entity<Products>(entity =>
             {
                 entity.HasKey(e => e.ProductId)
-                    .HasName("PK__Products__B40CC6ED04D0D17A");
+                    .HasName("PK__Products__B40CC6ED1ADEBA4C");
 
                 entity.Property(e => e.ProductId).HasColumnName("ProductID");
-
-                entity.Property(e => e.ColorId).HasColumnName("ColorID");
 
                 entity.Property(e => e.Name)
                     .IsRequired()
@@ -168,10 +150,30 @@ namespace DoapSoap.DataAccess.Entities
 
                 entity.Property(e => e.Price).HasColumnType("money");
 
-                entity.HasOne(d => d.Color)
+                entity.Property(e => e.SpiceId).HasColumnName("SpiceID");
+
+                entity.HasOne(d => d.Spice)
                     .WithMany(p => p.Products)
-                    .HasForeignKey(d => d.ColorId)
-                    .HasConstraintName("FK__Products__ColorI__53A266AC");
+                    .HasForeignKey(d => d.SpiceId)
+                    .HasConstraintName("FK__Products__SpiceI__025D5595");
+            });
+
+            modelBuilder.Entity<SpiceLevels>(entity =>
+            {
+                entity.HasKey(e => e.SpiceId)
+                    .HasName("PK__Spice_Le__6D1D9D9B20157A52");
+
+                entity.ToTable("Spice_Levels");
+
+                entity.HasIndex(e => e.Name)
+                    .HasName("UQ__Spice_Le__737584F6EE3DA4FB")
+                    .IsUnique();
+
+                entity.Property(e => e.SpiceId).HasColumnName("SpiceID");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(50);
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace DoapSoap.BusinessLogic.Models
 {
-    public class Color
+    public class SpiceLevel
     {
         public int ID { get; set; }
         public string Name { get; set; }
