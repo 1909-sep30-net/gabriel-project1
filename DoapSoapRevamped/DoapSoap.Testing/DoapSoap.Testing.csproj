@@ -13,4 +13,15 @@
     <PackageReference Include="coverlet.collector" Version="1.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="Entities\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DoapSoap.BusinessLogic\DoapSoap.BusinessLogic.csproj" />
+    <ProjectReference Include="..\DoapSoap.DataAccess\DoapSoap.DataAccess.csproj" />
+    <ProjectReference Include="..\DoapSoap.WebApp\DoapSoap.WebApp.csproj" />
+  </ItemGroup>
+
 </Project>
