@@ -18,6 +18,22 @@ namespace DoapSoap.DataAccess
                 Inventory = location.InventoryItems.ToDictionary(o=>MapProduct(o.Product),o=>o.Quantity)
             };
         }
+
+        /// <summary>
+        /// Map location without order history
+        /// </summary>
+        /// <param name="location"></param>
+        /// <returns></returns>
+        public static BusinessLogic.Models.Location MapLocationWithoutOH(Entities.Locations location)
+        {
+            return new BusinessLogic.Models.Location
+            {
+                ID = location.LocationId,
+                Name = location.Name,
+                Inventory = location.InventoryItems.ToDictionary(o => MapProduct(o.Product), o => o.Quantity)
+            };
+        }
+
         public static BusinessLogic.Models.Location MapLocationWithoutOI(Entities.Locations location)
         {
             return new BusinessLogic.Models.Location
