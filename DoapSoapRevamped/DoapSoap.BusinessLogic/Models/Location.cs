@@ -10,6 +10,6 @@ namespace DoapSoap.BusinessLogic.Models
         public string Name { get; set; }
 
         public ISet<Order> OrderHistory = new HashSet<Order>();
-        public Dictionary<Product, int> Inventory = new Dictionary<Product, int>();
+        public IDictionary<Product, int> Inventory = new Dictionary<Product, int>();
     }
 }
