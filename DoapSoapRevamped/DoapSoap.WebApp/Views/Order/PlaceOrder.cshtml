@@ -1,0 +1,46 @@
+﻿@model PlaceOrderViewModel
+@{
+    ViewData["Title"] = "Place Order";
+}
+
+<h1>Place An Order</h1>
+
+<div class="form-group">
+    <label for="sel1">Select location:</label>
+    <select class="form-control" name="cust" id="sel1">
+        @foreach (var location in Model.locations)
+        {
+            <option>@location.Name</option>
+        }
+    </select>
+</div>
+<div class="form-group">
+    <label for="sel1">Select customer:</label>
+    <select class="form-control" id="sel1">
+        @foreach (var customer in Model.customers)
+        {
+            <option>@customer.Name</option>
+        }
+    </select>
+</div>
+
+@{
+    if (Model.selectedOptions)
+    {
+    <h1>@ViewBag["selCust"]</h1>
+    }
+}
+
+@{ 
+
+}
+
+@*{
+    @Html.DropDownListFor(model => model.selectedCustomer, new SelectList(Model.customers))
+
+    @{
+
+     }
+
+    @await Html.PartialAsync("PartialInventory", Model.locations.First().Inventory)
+        }*@
