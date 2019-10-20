@@ -20,7 +20,7 @@ namespace DoapSoap.BusinessLogic.Interfaces
         /// </summary>
         /// <param name="id">ID of the location</param>
         /// <returns>List of orders from specified location</returns>
-        IEnumerable<Order> GetOrders(Location location);
+        IEnumerable<Order> GetOrdersWithProductDetails(int id);
 
         /// <summary>
         /// Get a list of all locations without including
@@ -33,7 +33,7 @@ namespace DoapSoap.BusinessLogic.Interfaces
         /// </summary>
         /// <param name="id">ID of the location</param>
         /// <returns></returns>
-        IDictionary<Product, int> GetLocationInventory(Location location);
+        IDictionary<Product, int> GetLocationInventory(int id);
 
         /// <summary>
         /// Edit/updates the location's inventory to the database

@@ -18,13 +18,18 @@ namespace DoapSoap.DataAccess.Repositories
             _context = context;
         }
 
+        /// <summary>
+        /// Grabs a list of all locations but only their names + ids
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<Location> GetAllLocations()
         {
+            // We shouldnt be modifying any of these locations, so mark as no tracking
             return _context.Locations.AsNoTracking().Select(Mapper.MapLocationWithoutOI);
         }
 
         /// <summary>
-        /// Get locations with everything (order items, inventory items)
+        /// Get locations without everything (order items, inventory items)
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -33,23 +38,34 @@ namespace DoapSoap.DataAccess.Repositories
             return Mapper.MapLocation(_context.Locations.Find(id));
         }
 
-        public IDictionary<Product, int> GetLocationInventory(Location location)
+        public IDictionary<Product, int> GetLocationInventory(int id)
         {
             //return _context.Locations.Where(l=>l.LocationId == location.ID)
             //    .Include(l=>l.InventoryItems)
             //    .First()
             //    .InventoryItems.ToDictionary(ii=>MapProduct(ii.Product), ii=>ii.Quantity);
             var newLocation = _context.Locations
-                .Where(l => l.LocationId == location.ID)
+                .Where(l => l.LocationId == id)
                 .Include(l => l.InventoryItems)
+                    .ThenInclude(i=>i.Product)
+                        .ThenInclude(p=>p.Spice)
                 .First();
 
             return Mapper.MapLocation(newLocation).Inventory;
         }
 
-        public IEnumerable<Order> GetOrders(Location location)
+        public IEnumerable<Order> GetOrdersWithProductDetails(int id)
         {
-            throw new NotImplementedException();
+            return _context.Orders
+                .Include(o => o.Customer)
+                .Include(o => o.Location)
+                .Include(o => o.OrderItems)
+                    .ThenInclude(oi => oi.Product)
+                        .ThenInclude(p => p.Spice)
+                .AsNoTracking()
+                .Where(o => o.LocationId == id)
+                .Select(Mapper.MapOrder)
+                .ToList();
         }
 
 

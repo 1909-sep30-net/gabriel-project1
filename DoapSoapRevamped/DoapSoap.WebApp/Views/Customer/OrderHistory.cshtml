@@ -40,7 +40,7 @@
            @foreach (var item in Model)
            {
             <tr class="orderDetailRow" style="border:3px solid">
-                <td>
+                <td style="border:2px solid">
                     @Html.DisplayFor(modelItem => item.Id)
                 </td>
                 <td>
@@ -105,5 +105,5 @@
 </div>
 
 <div>
-    <a asp-action="AllCustomers">Back to List</a>
+    <a asp-action="AllCustomers">Back to Customers</a>
 </div>

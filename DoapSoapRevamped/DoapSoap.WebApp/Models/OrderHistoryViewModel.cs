@@ -9,7 +9,7 @@ namespace DoapSoap.WebApp.Models
 {
     public class OrderHistoryViewModel
     {
-        [DisplayName("ID")]
+        [DisplayName("Product List")]
         public int Id { get; set; }
 
         [DisplayName("Customer Name")]

@@ -96,8 +96,10 @@ namespace DoapSoap.DataAccess.Repositories
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
                         .ThenInclude(p => p.Spice)
+                .AsNoTracking()
                 .Where(o => o.CustomerId == id)
-                .Select(Mapper.MapOrder).ToList();
+                .Select(Mapper.MapOrder)
+                .ToList();
         }
 
         #region IDisposable Support

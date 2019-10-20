@@ -1,14 +1,12 @@
 ﻿@model IEnumerable<DoapSoap.BusinessLogic.Models.Location>
 
 @{
-    ViewData["Title"] = "AllLocations";
+    ViewData["Title"] = "All Locations";
 }
 
-<h1>AllLocations</h1>
+<h1>All Locations</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
+
 <table class="table">
     <thead>
         <tr>
@@ -21,14 +19,11 @@
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.ID)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.ActionLink("Order History", "OrderHistory", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Inventory", "Inventory", new { /* id=item.PrimaryKey */ })
+                @Html.ActionLink("Order History", "OrderHistory", new { id = item.ID }) |
+                @Html.ActionLink("Inventory", "Inventory", new { id = item.ID })
             </td>
         </tr>
 }

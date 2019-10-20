@@ -1,0 +1,48 @@
+﻿@model IEnumerable<LocationInventoryViewModel>
+
+@{
+    ViewData["Title"] = ViewData["SelectedLocName"] + "'s Inventory";
+}
+
+<h1>Inventory</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Spice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Quantity)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductName)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Spice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Quantity)
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="AllLocations">Back to Locations</a>
+</div>
