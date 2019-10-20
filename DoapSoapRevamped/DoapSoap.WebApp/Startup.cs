@@ -35,7 +35,9 @@ namespace DoapSoap.WebApp
 
             // this registers the Repository class under the "name" of IRepository.
             // aka: "if anyone needs an IRepository, make a Repository."
-            services.AddScoped<IStoreRepository, StoreRepository>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<ILocationRepository, LocationRepository>();
+
             services.AddControllersWithViews();
         }
 

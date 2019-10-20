@@ -1,0 +1,109 @@
+﻿@model IEnumerable<OrderHistoryViewModel>
+
+    @{
+        ViewData["Title"] = ViewData["CustomerLogName"];
+    }
+
+
+
+<h1>@ViewData["CustomerLogName"]'s Order History </h1>
+
+
+<div>
+    @if (Model.Count() == 0)
+    {
+        <h3>No orders to show.</h3>
+    }
+    else
+    {
+    <table class="table">
+        <thead>
+            <!-- Label order properties -->
+            <tr class="orderTitleRow">
+                <th>
+                    @Html.DisplayNameFor(model => model.Id)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CustomerName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LocationName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Time)
+                </th>
+            </tr>
+            <!-- End of label header -->
+        </thead>
+        <tbody>
+            <!-- Display order details -->
+           @foreach (var item in Model)
+           {
+            <tr class="orderDetailRow" style="border:3px solid">
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CustomerName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LocationName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Time)
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="productTable">
+                        <thead>
+                            <!-- Display Product Properties -->
+                            <tr class="productTitleRow" style="border:2px solid;">
+                                <th>
+                                    @Html.DisplayNameFor(modelItem => item.ProductList.First().ProductName)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(modelItem => item.ProductList.First().Spice)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(modelItem => item.ProductList.First().Price)
+                                </th>
+                                <th>
+                                    @Html.DisplayNameFor(modelItem => item.ProductList.First().Quantity)
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                           @foreach (var itemPL in item.ProductList)
+                           {
+                            <!-- Display Product details -->
+                            <tr class="productDetailRow" style="border-left:dotted 1px; border-right:dotted 1px; border-bottom:1px;">
+                                <td>
+                                    @Html.DisplayFor(i => itemPL.ProductName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(i => itemPL.Spice)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(i => itemPL.Price)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(i => itemPL.Quantity)
+                                </td>
+                            </tr>
+                           }
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+
+            
+            }
+        </tbody>
+    </table>
+    }
+</div>
+
+<div>
+    <a asp-action="AllCustomers">Back to List</a>
+</div>

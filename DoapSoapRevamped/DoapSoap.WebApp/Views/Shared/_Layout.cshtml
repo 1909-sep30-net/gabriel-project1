@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
 
+    <!-- Im going to attempt to input my css like this-->
     <link href="@Url.Content("~/Styles/main.css")" rel="stylesheet" type="text/css" />
     @RenderSection("Styles", false)
     
@@ -26,7 +27,7 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="Index">Customers</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Customer" asp-action="AllCustomers">Customers</a>
                         </li>
                     </ul>
                 </div>

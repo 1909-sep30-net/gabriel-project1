@@ -13,17 +13,17 @@ namespace DoapSoap.WebApp.Controllers
 {
     public class CustomerController : Controller
     {
-        private readonly IStoreRepository _repo;
+        private readonly ICustomerRepository _repo;
 
         private static readonly NLog.ILogger logger = LogManager.GetCurrentClassLogger();
 
-        public CustomerController(IStoreRepository repo)
+        public CustomerController(ICustomerRepository repo)
         {
             _repo = repo;
         }
 
         // Display list of customers
-        public ActionResult Index()
+        public ActionResult AllCustomers()
         {
             IEnumerable<BusinessLogic.Models.Customer> customers = _repo.GetAllCustomers(null);
 
@@ -41,9 +41,9 @@ namespace DoapSoap.WebApp.Controllers
         }
 
         // Display specific customer's Order History and details of order
-        public ActionResult Details(int id)
+        public ActionResult OrderHistory(int id)
         {
-            IEnumerable<BusinessLogic.Models.Order> orders = _repo.GetOrdersByCustomerID(id);
+            IEnumerable<BusinessLogic.Models.Order> orders = _repo.GetOrdersWithProductDetails(id);
 
             string customerName = _repo.GetCustomer(id).Name;
 
@@ -78,7 +78,7 @@ namespace DoapSoap.WebApp.Controllers
             return View();
         }
 
- 
+
         /// <summary>
         /// Create new customer
         /// </summary>
@@ -99,62 +99,15 @@ namespace DoapSoap.WebApp.Controllers
                 };
 
                 // Add to db via repo
-                _repo.Add(newCustomer);
+                _repo.AddCustomer(newCustomer);
                 logger.Info("Added new customer");
 
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction(nameof(AllCustomers));
             }
             catch (Exception ex)
             {
                 logger.Debug(ex.Message);
                 return View(viewModel);
-            }
-        }
-
-
-        // GET: Customer/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: Customer/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Customer/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Customer/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
             }
         }
     }
