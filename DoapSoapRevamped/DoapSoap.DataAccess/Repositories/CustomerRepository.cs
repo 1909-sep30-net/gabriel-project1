@@ -52,6 +52,14 @@ namespace DoapSoap.DataAccess.Repositories
             return Mapper.MapCustomer(_context.Customers.Find(id));
         }
 
+        //public Customer GetCustomerWithOrderHistory(int id)
+        //{
+        //    var customer = _context.Customers.Where(c=>c.CustomerId==id)
+        //        .Include(c=>c.Orders)
+        //            .ThenInclude(o=>o.First)
+            
+        //}
+
         /// <summary>
         /// Get a list of all customers, or a list of matching customers to a name
         /// </summary>
@@ -73,11 +81,14 @@ namespace DoapSoap.DataAccess.Repositories
         }
 
         /// <summary>
-        /// Get customer's history of orders
+        /// Get customer's history of orders with all details
         /// </summary>
-        /// <param name="customer">the customer we want to retrieve orders for</param>
-        /// <returns>List of orders from specified customer</returns>
-        public IEnumerable<Order> GetCustomersOrders(Customer customer)
+        /// <remarks>
+        /// Get's the order history, the customer and location, the products of the order
+        /// </remarks>
+        /// <param name="id">the customer id from who we want to retrieve orders for</param>
+        /// <returns>List of orders from specified customer, fully populated</returns>
+        public IEnumerable<Order> GetOrdersWithProductDetails(int id)
         {
             return _context.Orders
                 .Include(o => o.Customer)
@@ -85,7 +96,7 @@ namespace DoapSoap.DataAccess.Repositories
                 .Include(o => o.OrderItems)
                     .ThenInclude(oi => oi.Product)
                         .ThenInclude(p => p.Spice)
-                .Where(o => o.CustomerId == customer.ID)
+                .Where(o => o.CustomerId == id)
                 .Select(Mapper.MapOrder).ToList();
         }
 

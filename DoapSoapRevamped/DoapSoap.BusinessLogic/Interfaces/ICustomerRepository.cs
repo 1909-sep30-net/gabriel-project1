@@ -25,7 +25,7 @@ namespace DoapSoap.BusinessLogic.Interfaces
         /// </summary>
         /// <param name="customer">the customer we want to retrieve orders for</param>
         /// <returns>List of orders from specified customer</returns>
-        IEnumerable<Order> GetCustomersOrders(Customer customer);
+        IEnumerable<Order> GetOrdersWithProductDetails(int id);
 
         /// <summary>
         /// Get a list of all customers, or a list of matching customers to a name
