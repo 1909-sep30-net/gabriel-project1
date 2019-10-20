@@ -1,0 +1,43 @@
+﻿@model IEnumerable<DoapSoap.BusinessLogic.Models.Customer>
+
+@{
+    ViewData["Title"] = "Search Customer";
+}
+
+<h1>Customer Search Results For "@ViewData["SearchName"]"</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Phone)
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Phone)
+            </td>
+            <td>
+                @Html.ActionLink("Order History", "OrderHistory", new { id = item.ID })
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

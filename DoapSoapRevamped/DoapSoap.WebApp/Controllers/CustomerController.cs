@@ -40,6 +40,14 @@ namespace DoapSoap.WebApp.Controllers
             return View(viewmodels);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AllCustomers(string SearchName)
+        {
+            // Redirect from customer page to search customer page with a string (the customer name to be searched)
+            return RedirectToAction("Search", new { search = SearchName });
+        }
+
         // Display specific customer's Order History and details of order
         public ActionResult OrderHistory(int id)
         {
@@ -109,6 +117,13 @@ namespace DoapSoap.WebApp.Controllers
                 logger.Debug(ex.Message);
                 return View(viewModel);
             }
+        }
+
+        public ActionResult Search(string search)
+        {
+            var customers = _repo.GetAllCustomers(search);
+            ViewData["SearchName"] = search;
+            return View(customers);
         }
     }
 }

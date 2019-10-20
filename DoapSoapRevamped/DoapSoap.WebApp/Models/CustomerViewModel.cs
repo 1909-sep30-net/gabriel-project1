@@ -28,12 +28,25 @@ namespace DoapSoap.WebApp.Models
         {
             get
             {
-                return String.Format("({0}) {1}-{2}", _phone.Substring(0, 3), _phone.Substring(3, 3), _phone.Substring(6, 4));
+                return _phone;
             }
             set
             {
                 _phone = value;
             }
         }
+
+        [DisplayName("Phone Number")]
+        [Required]
+        public string DisplayPhone
+        {
+            get
+            {
+                return String.Format("({0}) {1}-{2}", _phone.Substring(0, 3), _phone.Substring(3, 3), _phone.Substring(6, 4));
+            }
+        }
+
+        [DisplayName("Search Name")]
+        public string SearchName { get; set; }
     }
 }
