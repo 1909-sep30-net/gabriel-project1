@@ -37,5 +37,7 @@ namespace DoapSoap.WebApp.Models
         public int SelectedQuantity { get; set; }
 
         public IDictionary<Product,int> Inventory { get; set; }
+
+        public IDictionary<int,int> HiddenInventory { get; set; }
     }
 }

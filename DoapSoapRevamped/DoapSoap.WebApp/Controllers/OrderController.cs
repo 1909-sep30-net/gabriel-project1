@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DoapSoap.BusinessLogic.Interfaces;
+using DoapSoap.BusinessLogic.Models;
 using DoapSoap.DataAccess.Repositories;
 using DoapSoap.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -95,12 +96,18 @@ namespace DoapSoap.WebApp.Controllers
 
             var customer = _crepo.GetCustomer(custID);
 
+            var newHiddenInventory = new Dictionary<int, int>();
+            foreach (var item in locationInv)
+            {
+                newHiddenInventory.Add(item.Key.ID, item.Value);
+            }
+
             var model = new AddProductViewModel
             {
                 SelectedCustomer = customer,
                 SelectedLocation = location,
                 Inventory = locationInv,
-                
+                HiddenInventory = newHiddenInventory
             };
             return View(model);
         }
@@ -115,30 +122,40 @@ namespace DoapSoap.WebApp.Controllers
             int locID = (int)TempData["SelectedLocID"];
             int custID = (int)TempData["SelectedCustID"];
 
-            // Get location and populate inventory
             var location = _lrepo.GetLocation(locID);
-            location.Inventory = _lrepo.GetLocationInventory(location.ID);
-
             var customer = _crepo.GetCustomer(custID);
 
             // Grab the product and amount selected, then add to cart
             int quantity = model.SelectedQuantity;
+
+            // Get location and populate inventory
+            var pastInventory = ViewBag.HiddenInventory as Dictionary<int, int>;
+            var currentInventory = new Dictionary<Product, int>();
+            foreach(var item in pastInventory)
+            {
+                var newProduct = _crepo.GetProduct(item.Key);
+                currentInventory.Add(newProduct, item.Value);
+            }
+
+            location.Inventory = currentInventory;
             var product = location.Inventory.Keys.Where(p => p.ID == model.SelectedProductID).First();
 
             try
             {
                 location.RemoveFromInventory(product, quantity);
-                _lrepo.UpdateLocationInventory(location);
-                _lrepo.SaveChanges();
             }
             catch
             {
-                //_logger.Warn("Could not remove product from inventory.");
-                Console.WriteLine("Could not remove product from inventory.");
+                Console.WriteLine("Could not remove from inventory");
             }
 
-            // Grab new location inventory
-            var locationInv = _lrepo.GetLocationInventory(location.ID);
+            // Copy updated inventory into HiddenInventory tempdata
+            var newHiddenInv = new Dictionary<int, int>();
+            foreach(var item in location.Inventory)
+            {
+                newHiddenInv.Add(item.Key.ID,item.Value);
+            }
+            ViewBag.HiddenInventory = newHiddenInv;
 
             // Configure new cart
             var newCart = new Dictionary<int, int>();
@@ -165,7 +182,8 @@ namespace DoapSoap.WebApp.Controllers
                 SelectedCustomer = customer,
                 SelectedLocation = location,
                 DisplayCart = newDisplayCart,
-                Inventory = locationInv
+                Inventory = location.Inventory,
+                HiddenInventory = newHiddenInv,
             };
 
             return View(newModel);
