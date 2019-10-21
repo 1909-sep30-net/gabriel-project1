@@ -5,7 +5,6 @@ namespace DoapSoap.DataAccess.Entities
 {
     public partial class InventoryItems
     {
-        public int InventoryItemId { get; set; }
         public int LocationId { get; set; }
         public int ProductId { get; set; }
         public int Quantity { get; set; }

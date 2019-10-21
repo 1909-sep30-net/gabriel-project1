@@ -43,6 +43,6 @@ namespace DoapSoap.BusinessLogic.Models
             }
         }
 
-        public ISet<Order> OrderHistory { get; set; } = new HashSet<Order>();
+        public IEnumerable<Order> OrderHistory { get; set; } = new List<Order>();
     }
 }

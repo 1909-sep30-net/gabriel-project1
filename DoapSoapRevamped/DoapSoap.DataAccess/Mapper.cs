@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using DoapSoap.BusinessLogic.Models;
 using DoapSoap.DataAccess.Entities;
 
 namespace DoapSoap.DataAccess
@@ -52,6 +53,16 @@ namespace DoapSoap.DataAccess
             };
         }
 
+        public static Entities.Locations MapLocationWithInventory(BusinessLogic.Models.Location location)
+        {
+            return new Entities.Locations
+            {
+                LocationId = location.ID,
+                Name = location.Name,
+                InventoryItems = MapInventoryItems(location)
+            };
+        }
+
         public static BusinessLogic.Models.Customer MapCustomer(Entities.Customers customer)
         {
             return new BusinessLogic.Models.Customer
@@ -60,7 +71,7 @@ namespace DoapSoap.DataAccess
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
                 Phone = customer.Phone,
-                OrderHistory = customer.Orders.Select(MapOrder).ToHashSet()
+                OrderHistory = customer.Orders.Select(MapOrder).ToList()
             };
         }
 
@@ -86,6 +97,11 @@ namespace DoapSoap.DataAccess
             };
         }
 
+        /// <summary>
+        /// Map Orders with unpopulated customer/location
+        /// </summary>
+        /// <param name="order"></param>
+        /// <returns></returns>
         public static BusinessLogic.Models.Order MapOrder(Entities.Orders order)
         {
             return new BusinessLogic.Models.Order
@@ -121,9 +137,21 @@ namespace DoapSoap.DataAccess
             }
             return OIList;
         }
-        private static HashSet<Entities.InventoryItems> MapInventoryItems(InventoryItems arg1, int arg2)
+
+        public static ICollection<Entities.InventoryItems> MapInventoryItems(Location location)
         {
-            throw new NotImplementedException();
+            var inventory = location.Inventory;
+            List<InventoryItems> II = new List<InventoryItems>();
+            foreach(var item in inventory)
+            {
+                II.Add(new InventoryItems
+                {
+                    LocationId = location.ID,
+                    ProductId = item.Key.ID,
+                    Quantity = item.Value
+                });
+            }
+            return II;
         }
 
         public static BusinessLogic.Models.Product MapProduct(Entities.Products product)

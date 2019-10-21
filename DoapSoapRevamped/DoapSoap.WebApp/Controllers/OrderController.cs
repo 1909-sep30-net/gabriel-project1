@@ -6,6 +6,7 @@ using DoapSoap.BusinessLogic.Interfaces;
 using DoapSoap.DataAccess.Repositories;
 using DoapSoap.WebApp.Models;
 using Microsoft.AspNetCore.Mvc;
+using NLog;
 
 namespace DoapSoap.WebApp.Controllers
 {
@@ -13,11 +14,14 @@ namespace DoapSoap.WebApp.Controllers
     {
         private ICustomerRepository _crepo;
         private ILocationRepository _lrepo;
+        //private readonly NLog.ILogger _logger = LogManager.GetCurrentClassLogger();
 
-        public OrderController(ICustomerRepository crepo, ILocationRepository lrepo, CartViewModel cart)
+
+        public OrderController(ICustomerRepository crepo, ILocationRepository lrepo)
         {
             _crepo = crepo;
             _lrepo = lrepo;
+            //_logger = logger;
         }
 
         public IActionResult PlaceOrder()
@@ -29,6 +33,7 @@ namespace DoapSoap.WebApp.Controllers
                 customers = _crepo.GetAllCustomers(),
                 selectedOptions = false,
             };
+            HttpContext.Session.SetObject("Cart", null);
 
             return View(viewmodel);
         }
@@ -57,10 +62,6 @@ namespace DoapSoap.WebApp.Controllers
                 Quantity = i.Value
             });
 
-            var cart = HttpContext.Session.GetObject<CustomerViewModel>("Cart");
-            cart.FirstName += "BILLY";
-
-            HttpContext.Session.SetObject("Cart", cart);
 
             model.Products = viewmodel;
 
@@ -69,13 +70,16 @@ namespace DoapSoap.WebApp.Controllers
                 SelectedCustomer = model.selectedCustomer,
                 SelectedLocation = model.selectedLocation
             };
-            //model.selectedLocation.Inventory
+
             model.selectedLocation.Inventory = _lrepo.GetLocationInventory(locId);
-            HttpContext.Session.SetObject("SelectedCustomer",model.selectedCustomer);
-            HttpContext.Session.SetObject("SelectedLocation", model.selectedLocation);
+            TempData["SelectedCustID"] = model.selectedCustomer.ID;
+            TempData["SelectedLocID"] = model.selectedLocation.ID;
+
 
             return RedirectToAction(nameof(AddProducts));
         }
+
+
 
         /// <summary>
         /// Takes you to view where you can start adding products to your order
@@ -83,15 +87,97 @@ namespace DoapSoap.WebApp.Controllers
         /// <returns></returns>
         public IActionResult AddProducts()
         {
-            var selcus = HttpContext.Session.GetObject<BusinessLogic.Models.Customer>("SelectedCustomer");
-            var selloc = HttpContext.Session.GetObject<BusinessLogic.Models.Location>("SelectedLocation");
+            int locID = (int)TempData["SelectedLocID"];
+            int custID = (int)TempData["SelectedCustID"]; 
+
+            var location = _lrepo.GetLocation(locID);
+            var locationInv = _lrepo.GetLocationInventory(location.ID);
+
+            var customer = _crepo.GetCustomer(custID);
+
             var model = new AddProductViewModel
             {
-                SelectedCustomer = selcus,
-                SelectedLocation = selloc,
+                SelectedCustomer = customer,
+                SelectedLocation = location,
+                Inventory = locationInv,
                 
             };
             return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddProducts(AddProductViewModel model)
+        {
+            // Update returned inventory with model's selected quantity and location
+
+
+            int locID = (int)TempData["SelectedLocID"];
+            int custID = (int)TempData["SelectedCustID"];
+
+            // Get location and populate inventory
+            var location = _lrepo.GetLocation(locID);
+            location.Inventory = _lrepo.GetLocationInventory(location.ID);
+
+            var customer = _crepo.GetCustomer(custID);
+
+            // Grab the product and amount selected, then add to cart
+            int quantity = model.SelectedQuantity;
+            var product = location.Inventory.Keys.Where(p => p.ID == model.SelectedProductID).First();
+
+            try
+            {
+                location.RemoveFromInventory(product, quantity);
+                _lrepo.UpdateLocationInventory(location);
+                _lrepo.SaveChanges();
+            }
+            catch
+            {
+                //_logger.Warn("Could not remove product from inventory.");
+                Console.WriteLine("Could not remove product from inventory.");
+            }
+
+            // Grab new location inventory
+            var locationInv = _lrepo.GetLocationInventory(location.ID);
+
+            // Configure new cart
+            var newCart = new Dictionary<int, int>();
+
+            if (HttpContext.Session.GetObject<Dictionary<int, int>>("Cart") != null)
+            {
+                var currentCart = HttpContext.Session.GetObject<Dictionary<int, int>>("Cart");
+                newCart = new Dictionary<int, int>(currentCart);
+            }
+            newCart.Add(product.ID, quantity);
+            HttpContext.Session.SetObject("Cart", newCart);
+
+            // populate display cart using our persistent cart
+            var newDisplayCart = new Dictionary<BusinessLogic.Models.Product, int>();
+            foreach (var item in newCart)
+            {
+                var newProduct = _crepo.GetProduct(item.Key);
+                newDisplayCart.Add(newProduct, item.Value);
+            }
+
+            // Model we're sending to view
+            var newModel = new AddProductViewModel
+            {
+                SelectedCustomer = customer,
+                SelectedLocation = location,
+                DisplayCart = newDisplayCart,
+                Inventory = locationInv
+            };
+
+            return View(newModel);
+        }
+
+        /// <summary>
+        /// Takes cart, customer id, and store location and populates an order object, then attempts to add to db
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult ConfirmOrder()
+        {
+            return RedirectToRoute("default");
         }
     }
 }

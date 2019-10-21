@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,13 +12,29 @@ namespace DoapSoap.WebApp.Models
     {
         [DisplayName("Selected Customer")]
         public Customer SelectedCustomer { get; set; }
+        public int CustomerID { get; set; }
 
         [DisplayName("Selected Location")]
         public Location SelectedLocation { get; set; }
+        public int LocationID { get; set; }
 
-        public IDictionary<Product, int> Cart { get; set; } = new Dictionary<Product, int>();
+        /// <summary>
+        /// Cart that gets updated with each call
+        /// </summary>
+        public IDictionary<int, int> Cart { get; set; } = new Dictionary<int, int>();
 
-        public KeyValuePair<Product,int> SelectedProduct { get; set; }
+        /// <summary>
+        /// The cart that gets populated and displayed
+        /// </summary>
+        public IDictionary<Product, int> DisplayCart { get; set; } = new Dictionary<Product, int>();
+
+
+        [Required]
+        public int SelectedProductID { get; set; }
+
+        [DisplayName("Quantity")]
+        [Required]
+        public int SelectedQuantity { get; set; }
 
         public IDictionary<Product,int> Inventory { get; set; }
     }

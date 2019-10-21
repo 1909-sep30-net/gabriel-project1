@@ -15,10 +15,11 @@ namespace DoapSoap.WebApp.Controllers
     {
         private readonly ICustomerRepository _repo;
 
-        private static readonly NLog.ILogger logger = LogManager.GetCurrentClassLogger();
+        //private readonly NLog.ILogger _logger = LogManager.GetCurrentClassLogger();
 
         public CustomerController(ICustomerRepository repo)
         {
+            //_logger = logger;
             _repo = repo;
         }
 
@@ -35,7 +36,7 @@ namespace DoapSoap.WebApp.Controllers
                 Phone = c.Phone
             });
 
-            logger.Info("Viewing Customers");
+            //_logger.Info("Viewing Customers");
 
             return View(viewmodels);
         }
@@ -73,7 +74,7 @@ namespace DoapSoap.WebApp.Controllers
                 })
             });
 
-            logger.Info($"Viewing {customerName}'s Order History");
+            //_logger.Info($"Viewing {customerName}'s Order History");
 
             return View(viewmodels);
         }
@@ -108,13 +109,14 @@ namespace DoapSoap.WebApp.Controllers
 
                 // Add to db via repo
                 _repo.AddCustomer(newCustomer);
-                logger.Info("Added new customer");
+                //_logger.Info("Added new customer");
 
                 return RedirectToAction(nameof(AllCustomers));
             }
-            catch (Exception ex)
+            catch
             {
-                logger.Debug(ex.Message);
+                //_logger.Debug(ex.Message);
+                Console.WriteLine("Invalid Customer info");
                 return View(viewModel);
             }
         }

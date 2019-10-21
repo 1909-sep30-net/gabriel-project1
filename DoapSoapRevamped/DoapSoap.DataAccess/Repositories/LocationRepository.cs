@@ -38,6 +38,11 @@ namespace DoapSoap.DataAccess.Repositories
             return Mapper.MapLocation(_context.Locations.Find(id));
         }
 
+        public Location GetLocationWithInventory(int id)
+        {
+            return Mapper.MapLocation(_context.Locations.Where(l=>l.LocationId == id).Include(l => l.InventoryItems).First());
+        }
+
         public IDictionary<Product, int> GetLocationInventory(int id)
         {
 
@@ -65,10 +70,45 @@ namespace DoapSoap.DataAccess.Repositories
                 .ToList();
         }
 
+        /// <summary>
+        /// Get full product based on id
+        /// </summary>
+        /// <param name="id">ID of the product to be returned</param>
+        /// <returns></returns>
+        public Product GetProduct(int id)
+        {
+            return Mapper.MapProduct(_context.Products.Include(p => p.Spice).Where(p => p.ProductId == id).First());
+        }
+
+        //public void RemoveFromInventory(int locationID, int productID, int quantity)
+        //{
+        //    var inventory = GetLocationInventory(locationID);
+        //    var product = GetProduct(productID);
+        //    inventory[product] = inventory[product] - quantity;
+        //}
+
 
         public void UpdateLocationInventory(Location location)
         {
-            throw new NotImplementedException();
+            var oldEntity = _context.Locations.Where(l=>l.LocationId==location.ID).Include(l=>l.InventoryItems).First();
+            var newInventory = location.Inventory;
+            var oldInventory = oldEntity.InventoryItems.ToList();
+
+            //// Update old entity inventory with new values
+            //foreach (var item in oldEntity.InventoryItems)
+            //{
+            //    item.Quantity = newInventory[Mapper.MapProduct(item.Product)];
+            //}
+            for (int i = 0; i < newInventory.Count; i++)
+            {
+                var productKey = newInventory.Keys.Where(k => k.ID == oldInventory[i].ProductId).First();
+                //var product = Mapper.MapProduct(oldInventory[i].Product);
+                int newQuantity = newInventory[productKey];
+                oldInventory[i].Quantity = newQuantity;
+            }
+            oldEntity.InventoryItems.Select(i=>i.Quantity = newInventory[Mapper.MapProduct(i.Product)]);
+            var newEntity = oldEntity;
+
         }
 
         public void SaveChanges()

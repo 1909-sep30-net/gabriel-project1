@@ -34,6 +34,7 @@ namespace DoapSoap.BusinessLogic.Interfaces
         /// <returns></returns>
         IEnumerable<Customer> GetAllCustomers(string name = null);
 
+        Product GetProduct(int id);
 
     }
 }

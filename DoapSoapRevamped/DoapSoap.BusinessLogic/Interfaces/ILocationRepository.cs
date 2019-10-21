@@ -16,6 +16,13 @@ namespace DoapSoap.BusinessLogic.Interfaces
         Location GetLocation(int id);
 
         /// <summary>
+        /// Get location with inventory populated
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        Location GetLocationWithInventory(int id);
+
+        /// <summary>
         /// Get location's history of orders
         /// </summary>
         /// <param name="id">ID of the location</param>
@@ -34,6 +41,7 @@ namespace DoapSoap.BusinessLogic.Interfaces
         /// <param name="id">ID of the location</param>
         /// <returns></returns>
         IDictionary<Product, int> GetLocationInventory(int id);
+
 
         /// <summary>
         /// Edit/updates the location's inventory to the database

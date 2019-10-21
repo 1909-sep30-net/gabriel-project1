@@ -52,13 +52,6 @@ namespace DoapSoap.DataAccess.Repositories
             return Mapper.MapCustomer(_context.Customers.Find(id));
         }
 
-        //public Customer GetCustomerWithOrderHistory(int id)
-        //{
-        //    var customer = _context.Customers.Where(c=>c.CustomerId==id)
-        //        .Include(c=>c.Orders)
-        //            .ThenInclude(o=>o.First)
-            
-        //}
 
         /// <summary>
         /// Get a list of all customers, or a list of matching customers to a name
@@ -100,6 +93,19 @@ namespace DoapSoap.DataAccess.Repositories
                 .Where(o => o.CustomerId == id)
                 .Select(Mapper.MapOrder)
                 .ToList();
+        }
+
+        /// <summary>
+        /// Get a product by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Product GetProduct(int id)
+        {
+            return Mapper.MapProduct(_context.Products
+                .Include(p => p.Spice)
+                .Where(p => p.ProductId == id)
+                .First());
         }
 
         #region IDisposable Support
