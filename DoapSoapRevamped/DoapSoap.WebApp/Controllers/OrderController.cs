@@ -13,26 +13,23 @@ namespace DoapSoap.WebApp.Controllers
     {
         private ICustomerRepository _crepo;
         private ILocationRepository _lrepo;
-        private CartViewModel _cart;
-
 
         public OrderController(ICustomerRepository crepo, ILocationRepository lrepo, CartViewModel cart)
         {
             _crepo = crepo;
             _lrepo = lrepo;
-            _cart = cart;
         }
 
         public IActionResult PlaceOrder()
         {
+
             var viewmodel = new PlaceOrderViewModel
             {
                 locations = _lrepo.GetAllLocations(),
                 customers = _crepo.GetAllCustomers(),
-                selectedOptions = false
+                selectedOptions = false,
             };
 
-            _cart.Cart.Add(new BusinessLogic.Models.Product { Name = "fried chicken"},1);
             return View(viewmodel);
         }
 
@@ -40,8 +37,28 @@ namespace DoapSoap.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult PlaceOrder(PlaceOrderViewModel model)
         {
-            model.selectedCustomer = model.selectedCustomer;
+            // locId and custId should hold the id of the selected from before
+            int locId = int.Parse(Request.Form["sel1"]);
+            int custId = int.Parse(Request.Form["sel2"]);
+            model.selectedLocation = _lrepo.GetLocation(locId);
+            model.selectedCustomer = _crepo.GetCustomer(custId);
+
+            model.locations = _lrepo.GetAllLocations();
+            model.customers = _crepo.GetAllCustomers();
+
             model.selectedOptions = true;
+
+            var BLmodel = _lrepo.GetLocationInventory(locId);
+            var viewmodel = BLmodel.Select(i => new LocationInventoryViewModel
+            {
+                ProductName = i.Key.Name,
+                Spice = i.Key.Spice.Name,
+                Price = i.Key.Price,
+                Quantity = i.Value
+            });
+
+            model.Products = viewmodel;
+
             return View(model);
         }
     }

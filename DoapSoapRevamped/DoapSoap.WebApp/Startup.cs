@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using DoapSoap.DataAccess.Repositories;
+using DoapSoap.WebApp.Models;
 
 namespace DoapSoap.WebApp
 {
@@ -38,6 +39,10 @@ namespace DoapSoap.WebApp
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
 
+            services.AddSingleton<CartViewModel>();
+
+            services.AddSession();
+
             services.AddControllersWithViews();
         }
 
@@ -60,7 +65,7 @@ namespace DoapSoap.WebApp
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.UseSession();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

@@ -25,5 +25,9 @@ namespace DoapSoap.WebApp.Models
 
         public bool selectedOptions { get; set; }
 
+        public CartViewModel Cart { get; set; }
+
+        public IEnumerable<LocationInventoryViewModel> Products { get; set; }
+
     }
 }

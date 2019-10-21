@@ -5,42 +5,72 @@
 
 <h1>Place An Order</h1>
 
-<div class="form-group">
-    <label for="sel1">Select location:</label>
-    <select class="form-control" name="cust" id="sel1">
-        @foreach (var location in Model.locations)
-        {
-            <option>@location.Name</option>
-        }
-    </select>
-</div>
-<div class="form-group">
-    <label for="sel1">Select customer:</label>
-    <select class="form-control" id="sel1">
-        @foreach (var customer in Model.customers)
-        {
-            <option>@customer.Name</option>
-        }
-    </select>
-</div>
+<form asp-action="PlaceOrder">
+    <div class="form-group">
+        <label for="sel1">Select location:</label>
+        <select class="form-control" name="sel1" id="sel1">
+            @foreach (var location in Model.locations)
+            {
+                <option value="@location.ID">@location.Name</option>
+            }   
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="sel2">Select customer:</label>
+        <select class="form-control" name="sel2" id="sel2">
+            @foreach (var customer in Model.customers)
+            {
+                <option value="@customer.ID">@customer.Name</option>
+            }
+        </select>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Update Store Inventory" class="btn btn-primary" />
+    </div>
+</form>
 
 @{
     if (Model.selectedOptions)
     {
-    <h1>@ViewBag["selCust"]</h1>
+    <h1>@Model.selectedCustomer.Name</h1>
+    <h1>@Model.selectedLocation.Name</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products.Single().ProductName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products.Single().Price)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products.Single().Spice)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Products.Single().Quantity)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Products)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ProductName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Spice)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Price)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Quantity)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
     }
 }
 
-@{ 
-
-}
-
-@*{
-    @Html.DropDownListFor(model => model.selectedCustomer, new SelectList(Model.customers))
-
-    @{
-
-     }
-
-    @await Html.PartialAsync("PartialInventory", Model.locations.First().Inventory)
-        }*@

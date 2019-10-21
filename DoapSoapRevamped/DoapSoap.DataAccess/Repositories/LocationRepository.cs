@@ -40,10 +40,7 @@ namespace DoapSoap.DataAccess.Repositories
 
         public IDictionary<Product, int> GetLocationInventory(int id)
         {
-            //return _context.Locations.Where(l=>l.LocationId == location.ID)
-            //    .Include(l=>l.InventoryItems)
-            //    .First()
-            //    .InventoryItems.ToDictionary(ii=>MapProduct(ii.Product), ii=>ii.Quantity);
+
             var newLocation = _context.Locations
                 .Where(l => l.LocationId == id)
                 .Include(l => l.InventoryItems)

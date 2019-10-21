@@ -8,6 +8,10 @@ namespace DoapSoap.WebApp.Models
 {
     public class CartViewModel
     {
-        public IDictionary<Product,int> Cart { get; set; }
+        public CartViewModel()
+        {
+
+        }
+        public IDictionary<Product, int> Cart { get; set; } = new Dictionary<Product, int>();
     }
 }
