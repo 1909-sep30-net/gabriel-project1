@@ -4,6 +4,7 @@ using System.Text;
 
 namespace DoapSoap.BusinessLogic.Models
 {
+    
     public class Product
     {
         public int ID { get; set; }

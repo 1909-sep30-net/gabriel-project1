@@ -37,7 +37,6 @@ namespace DoapSoap.WebApp.Models
         }
 
         [DisplayName("Phone Number")]
-        [Required]
         public string DisplayPhone
         {
             get

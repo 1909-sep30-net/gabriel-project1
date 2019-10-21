@@ -57,8 +57,40 @@ namespace DoapSoap.WebApp.Controllers
                 Quantity = i.Value
             });
 
+            var cart = HttpContext.Session.GetObject<CustomerViewModel>("Cart");
+            cart.FirstName += "BILLY";
+
+            HttpContext.Session.SetObject("Cart", cart);
+
             model.Products = viewmodel;
 
+            var addProductModel = new AddProductViewModel
+            {
+                SelectedCustomer = model.selectedCustomer,
+                SelectedLocation = model.selectedLocation
+            };
+            //model.selectedLocation.Inventory
+            model.selectedLocation.Inventory = _lrepo.GetLocationInventory(locId);
+            HttpContext.Session.SetObject("SelectedCustomer",model.selectedCustomer);
+            HttpContext.Session.SetObject("SelectedLocation", model.selectedLocation);
+
+            return RedirectToAction(nameof(AddProducts));
+        }
+
+        /// <summary>
+        /// Takes you to view where you can start adding products to your order
+        /// </summary>
+        /// <returns></returns>
+        public IActionResult AddProducts()
+        {
+            var selcus = HttpContext.Session.GetObject<BusinessLogic.Models.Customer>("SelectedCustomer");
+            var selloc = HttpContext.Session.GetObject<BusinessLogic.Models.Location>("SelectedLocation");
+            var model = new AddProductViewModel
+            {
+                SelectedCustomer = selcus,
+                SelectedLocation = selloc,
+                
+            };
             return View(model);
         }
     }

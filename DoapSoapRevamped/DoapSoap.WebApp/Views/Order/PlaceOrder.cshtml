@@ -1,4 +1,6 @@
-﻿@model PlaceOrderViewModel
+﻿@using Microsoft.AspNetCore.Mvc;
+
+@model PlaceOrderViewModel
 @{
     ViewData["Title"] = "Place Order";
 }
@@ -12,7 +14,7 @@
             @foreach (var location in Model.locations)
             {
                 <option value="@location.ID">@location.Name</option>
-            }   
+            }
         </select>
     </div>
     <div class="form-group">
@@ -29,48 +31,23 @@
     </div>
 </form>
 
+<a asp-action="AddProduct">Confirm Customer and Location</a>
+
+@{
+
+}
+
 @{
     if (Model.selectedOptions)
     {
-    <h1>@Model.selectedCustomer.Name</h1>
-    <h1>@Model.selectedLocation.Name</h1>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Products.Single().ProductName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Products.Single().Price)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Products.Single().Spice)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Products.Single().Quantity)
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Products)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.ProductName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Spice)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Price)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Quantity)
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+        var obj = Context.Session.GetObject<CustomerViewModel>("Cart");
+        <h2>customer first name: @obj.FirstName</h2>
+        <h1>Selected Customer: @Model.selectedCustomer.Name</h1>
+        <h1>Selected Location: @Model.selectedLocation.Name</h1>
+
+        await Html.RenderPartialAsync("_LocationInventory", Model.Products);
     }
 }
+
+
 

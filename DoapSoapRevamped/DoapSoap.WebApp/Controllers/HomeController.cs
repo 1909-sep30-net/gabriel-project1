@@ -22,6 +22,12 @@ namespace DoapSoap.WebApp.Controllers
         public IActionResult Index()
         {
             RecordInSession("Home");
+            var mockCustomer = new CustomerViewModel
+            {
+                FirstName = "ima append billy to this and reset every time i go to the Home page --",
+                Phone = "6268075313"
+            };
+            HttpContext.Session.SetObject("Cart", mockCustomer);
 
             return View();
         }
