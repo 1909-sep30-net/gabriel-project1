@@ -119,6 +119,7 @@ namespace DoapSoap.WebApp.Controllers
             }
         }
 
+        [HttpPost]
         public ActionResult Search(string search)
         {
             var customers = _repo.GetAllCustomers(search);

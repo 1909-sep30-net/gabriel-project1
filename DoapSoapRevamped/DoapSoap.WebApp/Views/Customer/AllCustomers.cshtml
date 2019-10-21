@@ -6,14 +6,17 @@
 <h1>All Customers</h1>
 
 <p>
-    <a asp-action="Create">Create New</a> | <a asp-action="Search">Search For</a>
+    <a asp-action="Create">Create New Customer</a>
 </p>
 
-<form method="POST">
-    <label for="SearchName">Search Name</label>
-    <input type="text" id="SearchName" name="SearchName" placeholder="Search name goes here" />
-    <input type="submit" />
+<form asp-action="Search">
+    <div class="form-group">
+        <label for="SearchName" class="control-label">Search Customer Name</label>
+        <input type="text" class="form-control" id="SearchName" name="search" placeholder="Search name goes here" />
+        <input type="submit" class="btn btn-primary" value="Search" />
+    </div>
 </form>
+
 <table class="table">
     <thead>
         <tr>

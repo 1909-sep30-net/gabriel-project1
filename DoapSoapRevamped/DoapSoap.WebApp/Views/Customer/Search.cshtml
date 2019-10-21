@@ -4,8 +4,17 @@
     ViewData["Title"] = "Search Customer";
 }
 
+
+
 <h1>Customer Search Results For "@ViewData["SearchName"]"</h1>
 
+<form asp-action="Search">
+    <div class="form-group">
+        <label for="SearchName" class="control-label">Search Customer Name</label>
+        <input type="text" class="form-control" id="SearchName" name="search" placeholder="Search name goes here" />
+        <input type="submit" class="btn btn-primary" value="Search" />
+    </div>
+</form>
 
 <table class="table">
     <thead>
