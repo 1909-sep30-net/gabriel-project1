@@ -9,11 +9,12 @@
 }
 
 <h1>Add Products To Your Order</h1>
+<hr />
 @{
-    <h3>Selected Customer: @Model.SelectedCustomer.Name</h3>
-    <h3>Selected Location: @Model.SelectedLocation.Name</h3>
+    <h4>Selected Customer: @Model.SelectedCustomer.Name</h4>
+    <h4>Selected Location: @Model.SelectedLocation.Name</h4>
 }
-
+<hr />
 @if (Model.InvalidQuantityTaken)
 {
     <h2 class="text-danger">We don't have enough in stock!</h2>

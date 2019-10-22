@@ -99,25 +99,30 @@ namespace DoapSoap.WebApp.Controllers
         {
             try
             {
-                // Create new instance of customer from the viewmodel
-                var newCustomer = new BusinessLogic.Models.Customer
+                if (ModelState.IsValid)
                 {
-                    FirstName = viewModel.FirstName,
-                    LastName = viewModel.LastName,
-                    Phone = viewModel.Phone
-                };
+                    // Create new instance of customer from the viewmodel
+                    var newCustomer = new BusinessLogic.Models.Customer
+                    {
+                        FirstName = viewModel.FirstName,
+                        LastName = viewModel.LastName,
+                        Phone = viewModel.Phone
+                    };
 
-                // Add to db via repo
-                _repo.AddCustomer(newCustomer);
-                //_logger.Info("Added new customer");
+                    // Add to db via repo
+                    _repo.AddCustomer(newCustomer);
+                    //_logger.Info("Added new customer");
 
-                return RedirectToAction(nameof(AllCustomers));
+                    return RedirectToAction(nameof(AllCustomers));
+                }
+                return View(viewModel);
+
             }
             catch
             {
                 //_logger.Debug(ex.Message);
                 Console.WriteLine("Invalid Customer info");
-                return View(viewModel);
+                return View();
             }
         }
 

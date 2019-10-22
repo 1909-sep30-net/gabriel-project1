@@ -9,7 +9,7 @@
         
 
         <h1 class="display-1 fadeIn titlePageDivs" style="color:white;">Order Confirmed!</h1>
-        <h4 class="display-4 fadeIn-delay-1 titlePageDivs" style="color:white;" >Thanks for shopping with Super Supper Soup Coop.</h4>
+        <h4 class="display-4 fadeIn-delay-1 titlePageDivs" style="color:white;" >Thanks for shopping with <br />Super Supper Soup Coop.</h4>
         <br />
     </div>
 
@@ -19,9 +19,9 @@
     <h3 class="display-3">Purchased:</h3>
 
     @{
-        await Html.RenderPartialAsync("_Cart", Model);
+        await Html.RenderPartialAsync("_Cart-Delay", Model);
     }
 </div>
 <div class="text-center btn btn-primary bg-light fadeIn-delay-2">
-    @Html.ActionLink("Back To Home","Index","HomeController")
+    @Html.ActionLink("Back To Home","Index","Home")
 </div>
