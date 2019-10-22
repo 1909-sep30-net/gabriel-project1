@@ -16,7 +16,7 @@ namespace DoapSoap.DataAccess
                 ID = location.LocationId,
                 Name = location.Name,
                 OrderHistory = location.Orders.Select(MapOrder).ToHashSet(),
-                Inventory = location.InventoryItems.ToDictionary(o=>MapProduct(o.Product),o=>o.Quantity)
+                Inventory = location.InventoryItems.ToDictionary(o => MapProduct(o.Product), o => o.Quantity)
             };
         }
 
@@ -124,14 +124,15 @@ namespace DoapSoap.DataAccess
                 OrderItems = MapOrderItems(order.ProductList)
             };
         }
-        public static HashSet<Entities.OrderItems> MapOrderItems(Dictionary<BusinessLogic.Models.Product,int> pl)
+        public static HashSet<Entities.OrderItems> MapOrderItems(Dictionary<BusinessLogic.Models.Product, int> pl)
         {
             HashSet<Entities.OrderItems> OIList = new HashSet<Entities.OrderItems>();
-            foreach (KeyValuePair<BusinessLogic.Models.Product,int> key in pl)
+            foreach (KeyValuePair<BusinessLogic.Models.Product, int> key in pl)
             {
                 OIList.Add(new Entities.OrderItems
                 {
-                    Product = MapProduct(key.Key),
+                    ProductId = key.Key.ID,
+                    //Product = MapProduct(key.Key),
                     Quantity = key.Value
                 });
             }
@@ -142,7 +143,7 @@ namespace DoapSoap.DataAccess
         {
             var inventory = location.Inventory;
             List<InventoryItems> II = new List<InventoryItems>();
-            foreach(var item in inventory)
+            foreach (var item in inventory)
             {
                 II.Add(new InventoryItems
                 {
@@ -171,15 +172,24 @@ namespace DoapSoap.DataAccess
             return new Entities.Products
             {
                 ProductId = product.ID,
+                Spice = MapSpice(product.Spice)
             };
         }
 
-        public static BusinessLogic.Models.SpiceLevel MapSpice (Entities.SpiceLevels spice)
+        public static BusinessLogic.Models.SpiceLevel MapSpice(Entities.SpiceLevels spice)
         {
             return new BusinessLogic.Models.SpiceLevel
             {
                 ID = spice.SpiceId,
                 Name = spice.Name
+            };
+        }
+
+        public static Entities.SpiceLevels MapSpice(BusinessLogic.Models.SpiceLevel spice)
+        {
+            return new Entities.SpiceLevels
+            {
+                SpiceId = spice.ID
             };
         }
     }

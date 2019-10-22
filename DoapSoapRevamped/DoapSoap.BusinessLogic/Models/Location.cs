@@ -23,5 +23,6 @@ namespace DoapSoap.BusinessLogic.Models
                 Inventory[product] -= quantity;
             }
         }
+
     }
 }

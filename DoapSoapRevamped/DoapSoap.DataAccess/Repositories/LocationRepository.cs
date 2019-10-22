@@ -87,7 +87,10 @@ namespace DoapSoap.DataAccess.Repositories
         //    inventory[product] = inventory[product] - quantity;
         //}
 
-
+        /// <summary>
+        /// Update the database location inventory with the input location's inventory
+        /// </summary>
+        /// <param name="location"></param>
         public void UpdateLocationInventory(Location location)
         {
             var oldEntity = _context.Locations.Where(l=>l.LocationId==location.ID).Include(l=>l.InventoryItems).First();

@@ -15,14 +15,15 @@ namespace DoapSoap.WebApp.Controllers
     {
         private ICustomerRepository _crepo;
         private ILocationRepository _lrepo;
+        private IOrderRepository _orepo;
         //private readonly NLog.ILogger _logger = LogManager.GetCurrentClassLogger();
 
 
-        public OrderController(ICustomerRepository crepo, ILocationRepository lrepo)
+        public OrderController(ICustomerRepository crepo, ILocationRepository lrepo, IOrderRepository orepo)
         {
             _crepo = crepo;
             _lrepo = lrepo;
-            //_logger = logger;
+            _orepo = orepo;
         }
 
         public IActionResult PlaceOrder()
@@ -34,6 +35,27 @@ namespace DoapSoap.WebApp.Controllers
                 customers = _crepo.GetAllCustomers(),
                 selectedOptions = false,
             };
+
+            // If we come to this page but the cart isn't empty, we need to put the products back into their respective place
+            if (HttpContext.Session.GetObject<Dictionary<int, int>>("Cart") != null)
+            {
+                // Get existing cart, location it was taken from
+                var cart = HttpContext.Session.GetObject<Dictionary<int, int>>("Cart");
+                var locationID = HttpContext.Session.GetObject<int>("SelectedLocationID");
+                var location = _lrepo.GetLocation(locationID);
+                location.Inventory = _lrepo.GetLocationInventory(locationID);
+
+                // Increase location inventory quantities corresponding with the cart
+                foreach (var item in cart)
+                {
+                    var product = location.Inventory.Where(i=>i.Key.ID == item.Key).First().Key;
+                    location.Inventory[product] += item.Value;
+                }
+                // Save changes to the database
+                _lrepo.UpdateLocationInventory(location);
+                _lrepo.SaveChanges();
+            }
+
             HttpContext.Session.SetObject("Cart", null);
 
             return View(viewmodel);
@@ -108,6 +130,10 @@ namespace DoapSoap.WebApp.Controllers
                 SelectedLocation = location,
                 Inventory = locationInv,
             };
+
+            HttpContext.Session.SetObject("SelectedLocationID", locID);
+            HttpContext.Session.SetObject("SelectedCustomerID", custID);
+
             return View(model);
         }
 
@@ -187,10 +213,12 @@ namespace DoapSoap.WebApp.Controllers
             }
             try
             {
+                // Add new product id to dictionary
                 newCart.Add(product.ID, quantity);
             }
             catch
             {
+                // Catch if product is already in dictionary, then just increase the quantity
                 newCart[product.ID] += quantity;
             }
             HttpContext.Session.SetObject("Cart", newCart);
@@ -232,8 +260,40 @@ namespace DoapSoap.WebApp.Controllers
         /// <returns></returns>
         public IActionResult ConfirmOrder()
         {
+            // Translate the cart into the order inventory
+            Dictionary<Product, int> orderInventory = new Dictionary<Product, int>();
+            var cart = HttpContext.Session.GetObject<Dictionary<int, int>>("Cart");
+            foreach (var item in cart)
+            {
+                var product = _crepo.GetProduct(item.Key);
+                orderInventory.Add(product,item.Value);
+            }
             // Empty cart into an order
-            return RedirectToRoute("default");
+            Order order = new Order
+            {
+                TimePlaced = DateTime.Now,
+                Customer = _crepo.GetCustomer(HttpContext.Session.GetObject<int>("SelectedCustomerID")),
+                Location = _lrepo.GetLocation(HttpContext.Session.GetObject<int>("SelectedLocationID")),
+                ProductList = orderInventory
+            };
+
+            _orepo.AddOrder(order);
+            _orepo.SaveChanges();
+
+            var cartPreview = new List<CartViewModel>();
+            foreach (var item in cart)
+            {
+                var newProduct = _crepo.GetProduct(item.Key);
+                cartPreview.Add(new CartViewModel
+                {
+                    ProductName = newProduct.Name,
+                    Price = newProduct.Price,
+                    Quantity = item.Value,
+                    SpiceLevel = newProduct.Spice.Name
+                });
+            }
+
+            return View(cartPreview);
         }
     }
 }

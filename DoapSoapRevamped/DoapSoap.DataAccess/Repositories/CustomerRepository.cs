@@ -105,6 +105,7 @@ namespace DoapSoap.DataAccess.Repositories
             return Mapper.MapProduct(_context.Products
                 .Include(p => p.Spice)
                 .Where(p => p.ProductId == id)
+                .AsNoTracking()
                 .First());
         }
 

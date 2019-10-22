@@ -38,6 +38,8 @@ namespace DoapSoap.WebApp
             // aka: "if anyone needs an IRepository, make a Repository."
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ILocationRepository, LocationRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
+
 
             services.AddSingleton<CartViewModel>();
 

@@ -1,0 +1,26 @@
+﻿@model IEnumerable<CartViewModel>
+
+@{
+    ViewData["Title"] = "Confirm Order";
+}
+
+<div class="text-center">
+    <h1 class="display-1">Order Confirmed!</h1>
+    <h4 class="display-4">Thanks for shopping with Super Supper Soup Shop.</h4>
+    <br />
+    
+</div>
+
+<div class="text-center border-dark">
+    <h3 class="display-3">Order Purchased:</h3>
+
+
+
+
+    @{
+        await Html.RenderPartialAsync("_Cart", Model);
+    }
+</div>
+<div class="text-center btn btn-primary bg-light">
+    @Html.ActionLink("Back To Home","Index","HomeController")
+</div>

@@ -18,8 +18,11 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-    var displayPrice = item.Quantity * item.Price;
+        @{ 
+            var Sum = 0M;
+            foreach (var item in Model) {
+                var displayPrice = item.Quantity * item.Price;
+                Sum += displayPrice;
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.ProductName)
@@ -35,5 +38,9 @@
             </td>
         </tr>
 }
+        <tr>
+            <td>Total: $@Sum</td>
+        </tr>
+        }
     </tbody>
 </table>
