@@ -1,6 +1,6 @@
 ﻿@model IEnumerable<CartViewModel>
 
-<table class="table">
+<table class="table fadeIn-delay-2" style="color:white">
     <thead>
         <tr>
             <th>
@@ -34,12 +34,12 @@
                 @Html.DisplayFor(modelItem => item.Quantity)
             </td>
             <td>
-                $@displayPrice
+                @("$" + String.Format("{0:0.00}", displayPrice))
             </td>
         </tr>
 }
         <tr>
-            <td>Total: $@Sum</td>
+            <td>Total: @("$" + String.Format("{0:0.00}", Sum))</td>
         </tr>
         }
     </tbody>

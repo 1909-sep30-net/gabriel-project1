@@ -27,9 +27,9 @@
         <select asp-for="SelectedProductID" class="form-control">
             @foreach (var item in Model.Inventory)
             {
-                <option value="@item.Key.ID">
-                    @item.Key.Name | @item.Key.Spice.Name | $@item.Key.Price | Available: @item.Value
-                </option>
+            <option value="@item.Key.ID">
+                @item.Key.Name | @item.Key.Spice.Name | @("$" + String.Format("{0:0.00}", item.Key.Price)) | Available: @item.Value
+            </option>
             }
         </select>
     </div>
@@ -46,7 +46,7 @@
 <div class="btn btn-danger">
     @Html.ActionLink("Confirm Order", "ConfirmOrder")
 </div>
-
+<hr />
 <div class="card-title">
     <h2>Current Cart</h2>
 </div>
@@ -59,7 +59,7 @@
     }
     else
     {
-        <h4>Empty Cart. :(</h4>
+        <h5 class="text-warning">Empty Cart. :(</h5>
     }
 }
 

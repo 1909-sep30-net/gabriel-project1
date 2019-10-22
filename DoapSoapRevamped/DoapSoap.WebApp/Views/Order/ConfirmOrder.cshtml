@@ -4,23 +4,24 @@
     ViewData["Title"] = "Confirm Order";
 }
 
-<div class="text-center">
-    <h1 class="display-1">Order Confirmed!</h1>
-    <h4 class="display-4">Thanks for shopping with Super Supper Soup Shop.</h4>
-    <br />
-    
+    <div id="stripe1"></div>
+    <div class="text-center titlePageDivs">
+        
+
+        <h1 class="display-1 fadeIn titlePageDivs" style="color:white;">Order Confirmed!</h1>
+        <h4 class="display-4 fadeIn-delay-1 titlePageDivs" style="color:white;" >Thanks for shopping with Super Supper Soup Coop.</h4>
+        <br />
+    </div>
+
+<div id="myDIV">
 </div>
-
-<div class="text-center border-dark">
-    <h3 class="display-3">Order Purchased:</h3>
-
-
-
+<div class="text-center border-dark fadeIn-delay-2 titlePageDivs" style="color:white;">
+    <h3 class="display-3">Purchased:</h3>
 
     @{
         await Html.RenderPartialAsync("_Cart", Model);
     }
 </div>
-<div class="text-center btn btn-primary bg-light">
+<div class="text-center btn btn-primary bg-light fadeIn-delay-2">
     @Html.ActionLink("Back To Home","Index","HomeController")
 </div>

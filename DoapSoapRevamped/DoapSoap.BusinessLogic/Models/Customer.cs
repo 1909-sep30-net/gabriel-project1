@@ -7,9 +7,42 @@ namespace DoapSoap.BusinessLogic.Models
     public class Customer
     {
         private string _phone;
+        private string _firstName;
+        private string _lastName;
 
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        /// <summary>
+        /// Handles getting and setting first name
+        /// </summary>
+        public string FirstName
+        {
+            get
+            {
+                return _firstName;
+            }
+
+            set
+            {
+                // Always capitalize first letter and lowercase the rest
+                _firstName = value[0].ToString().ToUpper() + value.Substring(1).ToLower();
+            }
+        }
+
+        /// <summary>
+        /// Handles getting and setting last name
+        /// </summary>
+        public string LastName
+        {
+            get
+            {
+                return _lastName;
+            }
+
+            set
+            {
+                // Always capitalize first letter and lowercase the rest
+                _lastName = value[0].ToString().ToUpper() + value.Substring(1).ToLower();
+            }
+        }
         public int ID { get; set; }
         public string Name 
         {

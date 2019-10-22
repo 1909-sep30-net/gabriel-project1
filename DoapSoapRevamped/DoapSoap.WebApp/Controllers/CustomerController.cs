@@ -126,6 +126,16 @@ namespace DoapSoap.WebApp.Controllers
         {
             var customers = _repo.GetAllCustomers(search);
             ViewData["SearchName"] = search;
+            var models = new List<CustomerViewModel>();
+            foreach(var customer in customers)
+            {
+                models.Add(new CustomerViewModel
+                {
+                    FirstName = customer.FirstName,
+                    LastName = customer.LastName,
+                    Phone = customer.Phone
+                });
+            }
             return View(customers);
         }
     }
