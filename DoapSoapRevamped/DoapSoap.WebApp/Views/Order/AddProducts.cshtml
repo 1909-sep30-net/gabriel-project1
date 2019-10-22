@@ -6,7 +6,6 @@
 @{
     TempData["SelectedLocID"] = Model.SelectedLocation.ID;
     TempData["SelectedCustID"] = Model.SelectedCustomer.ID;
-    ViewBag.HiddenInventory = Model.HiddenInventory;
 }
 
 <h1>Add Products To Your Order</h1>
@@ -15,42 +14,54 @@
     <h3>Selected Location: @Model.SelectedLocation.Name</h3>
 }
 
+@if (Model.InvalidQuantityTaken)
+{
+    <h2 class="text-danger">We don't have enough in stock!</h2>
+    <p class="alert-warning">Please select a quantity within our available stock. :)</p>
+}
+
 <form asp-action="AddProducts">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="form-group">
         <label asp-for="SelectedProductID">Select Product:</label>
         <select asp-for="SelectedProductID" class="form-control">
             @foreach (var item in Model.Inventory)
             {
                 <option value="@item.Key.ID">
-                    @item.Key.Name | @item.Key.Spice.Name | @item.Key.Price | Available: @item.Value
+                    @item.Key.Name | @item.Key.Spice.Name | $@item.Key.Price | Available: @item.Value
                 </option>
             }
         </select>
     </div>
     <div class="form-group">
         <label asp-for="SelectedQuantity"></label>
-        <input asp-for="SelectedQuantity" class="form-control" type="number" min="1" step="1" />
+        <input asp-for="SelectedQuantity" class="form-control" type="number" min="1" max="5" step="1" />
         <span asp-validation-for="SelectedQuantity" class="text-danger"></span>
     </div>
     <div class="form-group">
         <input type="submit" value="Add to Cart" class="btn btn-primary" />
+        <input type="submit" value="Place Order" class="btn btn-primary" />
     </div>
 </form>
 
 @Html.ActionLink("Confirm Order", "ConfirmOrder")
 
-<h2>Current Cart</h2>
-<div>
-    <table class="table">
-        @foreach (var item in Model.DisplayCart)
-        {
-            <tr>
-                <td>@item.Key.Name</td>
-                <td>@item.Value</td>
-            </tr>
-        }
-    </table>
+<div class="card-title">
+    <h2>Current Cart</h2>
 </div>
 
-@Html.ActionLink("Go Back", "PlaceOrder")
+
+@{
+    if (Model.DisplayCart.Count > 0)
+    {
+        await Html.RenderPartialAsync("_Cart", Model._Cart);
+    } 
+    else
+    {
+        <h4>Empty Cart. :(</h4>
+        <p>Buy some soup!! Please</p>
+    }
+}
+
+    @Html.ActionLink("Go Back", "PlaceOrder")
 

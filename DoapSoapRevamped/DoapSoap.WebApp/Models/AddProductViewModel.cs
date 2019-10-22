@@ -34,10 +34,12 @@ namespace DoapSoap.WebApp.Models
 
         [DisplayName("Quantity")]
         [Required]
+        [Range(1,5)]
         public int SelectedQuantity { get; set; }
 
         public IDictionary<Product,int> Inventory { get; set; }
+        public IEnumerable<CartViewModel> _Cart { get; set; }
+        public bool InvalidQuantityTaken { get; set; }
 
-        public IDictionary<int,int> HiddenInventory { get; set; }
     }
 }

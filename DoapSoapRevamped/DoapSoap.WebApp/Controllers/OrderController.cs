@@ -107,7 +107,6 @@ namespace DoapSoap.WebApp.Controllers
                 SelectedCustomer = customer,
                 SelectedLocation = location,
                 Inventory = locationInv,
-                HiddenInventory = newHiddenInventory
             };
             return View(model);
         }
@@ -116,7 +115,6 @@ namespace DoapSoap.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AddProducts(AddProductViewModel model)
         {
-            // Update returned inventory with model's selected quantity and location
 
 
             int locID = (int)TempData["SelectedLocID"];
@@ -124,38 +122,60 @@ namespace DoapSoap.WebApp.Controllers
 
             var location = _lrepo.GetLocation(locID);
             var customer = _crepo.GetCustomer(custID);
+            var oldInventory = _lrepo.GetLocationInventory(locID);
+            location.Inventory = oldInventory;
 
             // Grab the product and amount selected, then add to cart
             int quantity = model.SelectedQuantity;
+            var product = oldInventory.Keys.Where(p => p.ID == model.SelectedProductID).First();
 
-            // Get location and populate inventory
-            var pastInventory = ViewBag.HiddenInventory as Dictionary<int, int>;
-            var currentInventory = new Dictionary<Product, int>();
-            foreach(var item in pastInventory)
-            {
-                var newProduct = _crepo.GetProduct(item.Key);
-                currentInventory.Add(newProduct, item.Value);
-            }
-
-            location.Inventory = currentInventory;
-            var product = location.Inventory.Keys.Where(p => p.ID == model.SelectedProductID).First();
-
+            // Update inventory with model's selected quantity and location
             try
             {
                 location.RemoveFromInventory(product, quantity);
+                _lrepo.UpdateLocationInventory(location);
+                _lrepo.SaveChanges();
             }
             catch
             {
                 Console.WriteLine("Could not remove from inventory");
-            }
 
-            // Copy updated inventory into HiddenInventory tempdata
-            var newHiddenInv = new Dictionary<int, int>();
-            foreach(var item in location.Inventory)
-            {
-                newHiddenInv.Add(item.Key.ID,item.Value);
+                // Recreate the cart to display without decrementing the inventory
+                var sameCart = new Dictionary<int, int>();
+                var sameDisplayCart = new Dictionary<Product, int>();
+                var sameCartVM = new List<CartViewModel>();
+
+                // If there's stuff in the cart, populate
+                if (HttpContext.Session.GetObject<Dictionary<int, int>>("Cart") != null)
+                {
+                    var currentCart = HttpContext.Session.GetObject<Dictionary<int, int>>("Cart");
+                    sameCart = new Dictionary<int, int>(currentCart);
+
+                    foreach (var item in sameCart)
+                    {
+                        var newProduct = _crepo.GetProduct(item.Key);
+                        sameDisplayCart.Add(newProduct, item.Value);
+                        sameCartVM.Add(new CartViewModel
+                        {
+                            ProductName = newProduct.Name,
+                            Price = newProduct.Price,
+                            Quantity = item.Value,
+                            SpiceLevel = newProduct.Spice.Name
+                        });
+                    }
+                }
+
+                var returnModel = new AddProductViewModel
+                {
+                    SelectedCustomer = customer,
+                    SelectedLocation = location,
+                    DisplayCart = sameDisplayCart,
+                    Inventory = location.Inventory,
+                    _Cart = sameCartVM,
+                    InvalidQuantityTaken = true
+                };
+                return View(returnModel);
             }
-            ViewBag.HiddenInventory = newHiddenInv;
 
             // Configure new cart
             var newCart = new Dictionary<int, int>();
@@ -165,16 +185,33 @@ namespace DoapSoap.WebApp.Controllers
                 var currentCart = HttpContext.Session.GetObject<Dictionary<int, int>>("Cart");
                 newCart = new Dictionary<int, int>(currentCart);
             }
-            newCart.Add(product.ID, quantity);
+            try
+            {
+                newCart.Add(product.ID, quantity);
+            }
+            catch
+            {
+                newCart[product.ID] += quantity;
+            }
             HttpContext.Session.SetObject("Cart", newCart);
 
             // populate display cart using our persistent cart
-            var newDisplayCart = new Dictionary<BusinessLogic.Models.Product, int>();
+            var newDisplayCart = new Dictionary<Product, int>();
+            var newCartVM = new List<CartViewModel>();
+
             foreach (var item in newCart)
             {
                 var newProduct = _crepo.GetProduct(item.Key);
                 newDisplayCart.Add(newProduct, item.Value);
+                newCartVM.Add(new CartViewModel
+                {
+                    ProductName = newProduct.Name,
+                    Price = newProduct.Price,
+                    Quantity = item.Value,
+                    SpiceLevel = newProduct.Spice.Name
+                });
             }
+
 
             // Model we're sending to view
             var newModel = new AddProductViewModel
@@ -183,7 +220,7 @@ namespace DoapSoap.WebApp.Controllers
                 SelectedLocation = location,
                 DisplayCart = newDisplayCart,
                 Inventory = location.Inventory,
-                HiddenInventory = newHiddenInv,
+                _Cart = newCartVM
             };
 
             return View(newModel);
@@ -195,6 +232,7 @@ namespace DoapSoap.WebApp.Controllers
         /// <returns></returns>
         public IActionResult ConfirmOrder()
         {
+            // Empty cart into an order
             return RedirectToRoute("default");
         }
     }

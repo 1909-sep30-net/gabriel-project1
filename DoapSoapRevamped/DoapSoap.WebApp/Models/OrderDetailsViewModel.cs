@@ -9,6 +9,8 @@ namespace DoapSoap.WebApp.Models
 {
     public class OrderDetailsViewModel
     {
+        private decimal _price;
+
         [DisplayName("Product Name")]
         [Required]
         public string ProductName { get; set; }
