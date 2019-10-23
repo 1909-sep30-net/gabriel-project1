@@ -292,6 +292,8 @@ namespace DoapSoap.WebApp.Controllers
                     SpiceLevel = newProduct.Spice.Name
                 });
             }
+            // Set session "cart" to null
+            HttpContext.Session.SetObject("Cart", null);
 
             return View(cartPreview);
         }
